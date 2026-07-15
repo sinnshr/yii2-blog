@@ -9,6 +9,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use app\assets\TailwindAsset;
 
 AppAsset::register($this);
 TailwindAsset::register($this);
