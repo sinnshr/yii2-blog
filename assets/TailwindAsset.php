@@ -1,4 +1,5 @@
 <?php
+namespace app\assets;
 
 class TailwindAsset extends \yii\web\AssetBundle
 {
