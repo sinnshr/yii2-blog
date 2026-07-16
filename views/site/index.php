@@ -13,15 +13,12 @@ $this->title = 'Yii2 Blog';
             <div class="bg-white p-5 mb-8 border border-gray-300 rounded-lg shadow-md">
                 <p class="text-base m-2">🌟 بیش از ۱۰۰ مقاله منتشر شده</p>
                 <p class="text-base m-2">👥 +۵۰۰۰ خواننده فعال</p>
-                <p class="text-base m-2">💡 محتوای منحصر به فرد و اصیل</p>
             </div>
 
             <div class="flex gap-2.5 justify-center mt-8">
-                <a href="#" class="bg-red-500 text-white px-8 py-2.5 no-underline font-bold rounded-full">آخرین
-                    نوشته‌ها</a>
-                <a href="#"
-                    class="bg-white text-gray-800 px-8 py-2.5 no-underline font-bold border-2 border-gray-300 rounded-full">درباره
-                    ما</a>
+                            <?= \yii\helpers\Html::a('آخرین نوشته‌ها', ['article/index'], [
+                                'class' => 'bg-red-500 text-white px-8 py-2.5 no-underline font-bold rounded-full',
+                            ]) ?>
             </div>
         </div>
     </div>
