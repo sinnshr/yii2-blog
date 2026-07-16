@@ -6,10 +6,10 @@
 use app\assets\AppAsset;
 use app\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use app\assets\TailwindAsset;
+use yii\helpers\Html;
 
 AppAsset::register($this);
 TailwindAsset::register($this);
@@ -30,28 +30,31 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <?php $this->head() ?>
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 bg-gray-300">
+    <?= \yii\helpers\Html::cssFile('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css') ?>
     <?php $this->beginBody() ?>
 
     <header id="header">
         <?php
         NavBar::begin([
-            'brandLabel' => Yii::$app->name,
+            'brandLabel' => 'وبلاگ Yii2',
             'brandUrl' => Yii::$app->homeUrl,
             'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
         ]);
         echo Nav::widget([
-            'options' => ['class' => 'navbar-nav'],
+            'options' => ['class' => 'navbar-nav px-3 py-2'],
             'items' => [
-                ['label' => 'Home', 'url' => ['/site/index']],
-                ['label' => 'About', 'url' => ['/site/about']],
-                ['label' => 'Contact', 'url' => ['/site/contact']],
+                ['label' => 'خانه', 'url' => ['/site/index']],
+                ['label' => 'مقالات', 'url' => ['/article/index']],
+                ['label' => 'دسته‌بندی‌ها', 'url' => ['/category/index']],
+                // ['label' => 'درباره‌ی ما', 'url' => ['/site/about']],
+                // ['label' => 'تماس', 'url' => ['/site/contact']],
                 Yii::$app->user->isGuest
-                ? ['label' => 'Login', 'url' => ['/site/login']]
+                ? ['label' => 'ورود', 'url' => ['/site/login']]
                 : '<li class="nav-item">'
                 . Html::beginForm(['/site/logout'])
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    'خروج (' . Yii::$app->user->identity->username . ')',
                     ['class' => 'nav-link btn btn-link logout']
                 )
                 . Html::endForm()
@@ -62,7 +65,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         ?>
     </header>
 
-    <main id="main" class="flex-shrink-0" role="main">
+    <main id="main" class="flex-shrink-0 bg-gray-300" role="main">
         <div class="container">
             <?php if (!empty($this->params['breadcrumbs'])): ?>
                 <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
@@ -72,11 +75,10 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         </div>
     </main>
 
-    <footer id="footer" class="mt-auto py-3 bg-light">
+    <footer id="footer" class="mt-auto py-3 bg-gray-300">
         <div class="container">
             <div class="row text-muted">
-                <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
-                <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
+                <div class="text-center"> وبلاگ <?= date('Y') ?>&copy;</div>
             </div>
         </div>
     </footer>

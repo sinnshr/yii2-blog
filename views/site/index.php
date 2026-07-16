@@ -2,52 +2,27 @@
 
 /** @var yii\web\View $this */
 
-$this->title = 'My Yii Application';
+$this->title = 'Yii2 Blog';
 ?>
-<div class="site-index">
+<div>
+    <div class="min-h-screen flex items-center justify-center rtl">
+        <div class="text-center text-gray-800 max-w-xl">
+            <h1 class="text-4xl mb-2 font-bold">وبلاگ Yii2</h1>
+            <p class="text-lg mb-8 leading-relaxed">مقالات به روز درباره‌ی فناوری</p>
 
-    <div class="jumbotron text-center bg-transparent mt-5 mb-5">
-        <h1 class="display-4">Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+            <div class="bg-white p-5 mb-8 border border-gray-300 rounded-lg shadow-md">
+                <p class="text-base m-2">🌟 بیش از ۱۰۰ مقاله منتشر شده</p>
+                <p class="text-base m-2">👥 +۵۰۰۰ خواننده فعال</p>
+                <p class="text-base m-2">💡 محتوای منحصر به فرد و اصیل</p>
             </div>
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+            <div class="flex gap-2.5 justify-center mt-8">
+                <a href="#" class="bg-red-500 text-white px-8 py-2.5 no-underline font-bold rounded-full">آخرین
+                    نوشته‌ها</a>
+                <a href="#"
+                    class="bg-white text-gray-800 px-8 py-2.5 no-underline font-bold border-2 border-gray-300 rounded-full">درباره
+                    ما</a>
             </div>
         </div>
-
     </div>
 </div>
