@@ -1,50 +1,52 @@
 <?php
 
-/** @var yii\web\View $this */
-/** @var yii\bootstrap5\ActiveForm $form */
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
+/** @var yii\web\View $this */
+/** @var yii\widgets\ActiveForm $form */
 /** @var app\models\LoginForm $model */
 
-use yii\bootstrap5\ActiveForm;
-use yii\bootstrap5\Html;
-
-$this->title = 'Login';
+$this->title = 'ورود';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to login:</p>
+<div class="max-w-md mx-auto px-4 py-12" dir="rtl">
+    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 
-    <div class="row">
-        <div class="col-lg-5">
+        <h1 class="text-2xl font-bold mb-2"><?= Html::encode($this->title) ?></h1>
+        <p class="text-gray-500 text-sm mb-6">برای ورود، نام کاربری و رمز عبور خود را وارد کنید.</p>
 
-            <?php $form = ActiveForm::begin([
-                'id' => 'login-form',
-                'fieldConfig' => [
-                    'template' => "{label}\n{input}\n{error}",
-                    'labelOptions' => ['class' => 'col-lg-1 col-form-label mr-lg-3'],
-                    'inputOptions' => ['class' => 'col-lg-3 form-control'],
-                    'errorOptions' => ['class' => 'col-lg-7 invalid-feedback'],
-                ],
-            ]); ?>
+        <?php $form = ActiveForm::begin([
+            'id' => 'login-form',
+            'fieldConfig' => [
+                'template' => "{label}\n{input}\n{error}",
+                'labelOptions' => ['class' => 'block mb-1 font-medium text-gray-700'],
+                'inputOptions' => ['class' => 'w-full rounded-lg border border-gray-300 px-3 py-2 mb-4'],
+                'errorOptions' => ['class' => 'text-red-500 text-sm mb-2'],
+            ],
+        ]); ?>
 
-            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?= $form->errorSummary($model, ['class' => 'text-red-500 text-sm mb-4']) ?>
 
-            <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('نام کاربری') ?>
 
-            <?= $form->field($model, 'rememberMe')->checkbox([
-                'template' => "<div class=\"custom-control custom-checkbox\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            ]) ?>
+        <?= $form->field($model, 'password')->passwordInput()->label('رمز عبور') ?>
 
-            <div class="form-group">
-                <div>
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
-            </div>
+        <?= $form->field($model, 'rememberMe')->checkbox([
+            'template' => "<div class=\"flex items-center gap-2 mb-4\">{input} {label}</div>",
+        ]) ?>
 
-            <?php ActiveForm::end(); ?>
-
+        <div class="form-group">
+            <?= Html::submitButton('ورود', ['class' => 'btn btn-primary w-full', 'name' => 'login-button']) ?>
         </div>
+
+        <?php ActiveForm::end(); ?>
+
+        <p class="text-sm text-gray-500 mt-4">
+            حساب کاربری ندارید؟
+            <?= Html::a('ثبت‌نام کنید', ['site/signup'], ['class' => 'text-blue-600 hover:underline']) ?>
+        </p>
+
     </div>
 </div>
