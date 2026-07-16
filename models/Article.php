@@ -94,4 +94,9 @@ class Article extends \yii\db\ActiveRecord
             ->exists();
     }
 
+    public function getAuthor()
+    {
+        return $this->hasOne(User::class, ['id' => 'author_id']);
+    }
+
 }
