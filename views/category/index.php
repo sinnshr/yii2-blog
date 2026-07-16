@@ -10,39 +10,42 @@ use yii\grid\GridView;
 /** @var app\models\CategorySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Categories';
+$this->title = 'دسته‌بندی‌ها';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="category-index">
+<div class="max-w-4xl mx-auto px-4 py-8" dir="rtl">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold"><?= Html::encode($this->title) ?></h1>
+        <?= Html::a('+ دسته‌بندی جدید', ['create'], ['class' => 'btn btn-success']) ?>
+    </div>
 
-    <p>
-        <?= Html::a('Create Category', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            'id',
-            'title',
-            [
-                'attribute' => 'parent_id',
-                'value' => function ($model) {
-                        return $model->parent ? $model->parent->title : 'Parent Category';
-                    },
+    <div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden p-8">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'tableOptions' => ['class' => 'table w-full text-right'],
+            'summary' => 'نمایش {begin}-{end} از {totalCount} مورد',
+            'layout' => "{items}\n{summary}\n{pager}",
+            'columns' => [
+                'id',
+                ['attribute' => 'title', 'label' => 'عنوان'],
+                [
+                    'attribute' => 'parent_id',
+                    'label' => 'دسته‌بندی والد',
+                    'value' => function ($model) {
+                                return $model->parent ? $model->parent->title : 'دسته اصلی';
+                            },
+                ],
+                [
+                    'class' => ActionColumn::class,
+                    'header' => 'عملیات',
+                    'urlCreator' => function ($action, Category $model, $key, $index, $column) {
+                                return Url::toRoute([$action, 'id' => $model->id]);
+                            },
+                ],
             ],
-            [
-                'class' => ActionColumn::class,
-                'urlCreator' => function ($action, Category $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id' => $model->id]);
-                    }
-            ]
-        ],
-    ]); ?>
-
+        ]); ?>
+    </div>
 
 </div>
