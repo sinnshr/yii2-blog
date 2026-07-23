@@ -51,8 +51,6 @@ class SignupForm extends Model
             Yii::$app->authManager->assign(Yii::$app->authManager->getRole('author'), $user->id);
             return true;
         }
-        var_dump($user->getErrors()); // <-- add this
-        exit;
 
         return false;
     }
