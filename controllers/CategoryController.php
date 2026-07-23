@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use Yii;
+use yii\db\IntegrityException;
 
 /**
  * CategoryController implements the CRUD actions for Category model.
@@ -119,7 +121,14 @@ class CategoryController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        try {
+            $model->delete();
+        } catch (IntegrityException $e) {
+            Yii::$app->session->setFlash('error', 'این دسته‌بندی دارای مقاله است و قابل حذف نیست. ابتدا مقالات آن را حذف یا به دسته‌بندی دیگری منتقل کنید.');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
 
         return $this->redirect(['index']);
     }
