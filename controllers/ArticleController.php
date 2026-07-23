@@ -105,11 +105,11 @@ class ArticleController extends Controller
 
             if ($model->imageFile) {
                 $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
-                $model->imageFile->saveAs('uploads/images/' . $model->imageFile);
+                $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
             }
             if ($model->pdfFile) {
-                $model->pdf = $model->pdfFile->baseName . "." . $model->pdfFile->extension;
-                $model->pdfFile->saveAs('uploads/pdfs/' . $model->pdfFile);
+                $model->pdf_file = $model->pdfFile->baseName . "." . $model->pdfFile->extension;
+                $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
             }
             if ($model->load($this->request->post())) {
                 $model->author_id = Yii::$app->user->id;
@@ -137,6 +137,17 @@ class ArticleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+        $model->pdfFile = UploadedFile::getInstance($model, 'pdfFile');
+
+        if ($model->imageFile) {
+            $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
+            $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
+        }
+        if ($model->pdfFile) {
+            $model->pdf_file = $model->pdfFile->baseName . "." . $model->pdfFile->extension;
+            $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
+        }
 
         if (!Yii::$app->user->can('updateAnyArticle') && $model->author_id !== Yii::$app->user->id) { // editing permission
             throw new ForbiddenHttpException('فقط می‌توانید مقاله‌های خود را ویرایش کنید.');

@@ -36,8 +36,6 @@ use app\models\Category;
             ['prompt' => 'انتخاب دسته‌بندی']
         )->label('دسته‌بندی') ?>
 
-        <?= $form->field($model, 'author_id')->hiddenInput(['value' => Yii::$app->user->id])->label(false) ?>
-
         <div class="form-group mt-6 text-left">
             <?= Html::submitButton('ذخیره', ['class' => 'btn btn-success']) ?>
         </div>
