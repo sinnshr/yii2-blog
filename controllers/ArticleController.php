@@ -60,18 +60,6 @@ class ArticleController extends Controller
         );
     }
 
-    public $pdfFile;
-    public $imageFile;
-
-    public function rules()
-    {
-        return [
-
-            [['pdfFile'], 'file', 'extensions' => 'pdf'],
-            [['imageFile'], 'file', 'extensions' => 'png, jpg, jpeg'],
-        ];
-    }
-
     /**
      * Lists all Article models.
      *
@@ -121,10 +109,13 @@ class ArticleController extends Controller
             }
             if ($model->pdfFile) {
                 $model->pdf = $model->pdfFile->baseName . "." . $model->pdfFile->extension;
-                $model->pdfFile->saveAs('uploads/pdfs' . $model->pdfFile);
+                $model->pdfFile->saveAs('uploads/pdfs/' . $model->pdfFile);
             }
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->author_id = Yii::$app->user->id;
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
