@@ -99,21 +99,22 @@ class ArticleController extends Controller
         $model = new Article();
 
         if ($this->request->isPost) {
-
+            $model->load($this->request->post());
+            $model->author_id = Yii::$app->user->id;
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
             $model->pdfFile = UploadedFile::getInstance($model, 'pdfFile');
 
-            if ($model->imageFile) {
-                $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
-                $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
-            }
-            if ($model->pdfFile) {
-                $model->pdf_file = $model->pdfFile->baseName . "." . $model->pdfFile->extension;
-                $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
-            }
-            if ($model->load($this->request->post())) {
-                $model->author_id = Yii::$app->user->id;
-                if ($model->save()) {
+            if ($model->validate()) {
+                if ($model->imageFile) {
+                    $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
+                    $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
+                }
+                if ($model->pdfFile) {
+                    $model->pdf_file = $model->pdfFile->baseName . '.' . $model->pdfFile->extension;
+                    $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
+                }
+
+                if ($model->save(false)) {
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
@@ -121,10 +122,7 @@ class ArticleController extends Controller
             $model->loadDefaultValues();
         }
 
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
 
     /**
@@ -137,27 +135,33 @@ class ArticleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-        $model->pdfFile = UploadedFile::getInstance($model, 'pdfFile');
 
-        if ($model->imageFile) {
-            $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
-            $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
-        }
-        if ($model->pdfFile) {
-            $model->pdf_file = $model->pdfFile->baseName . "." . $model->pdfFile->extension;
-            $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
-        }
-
-        if (!Yii::$app->user->can('updateAnyArticle') && $model->author_id !== Yii::$app->user->id) { // editing permission
+        if (!Yii::$app->user->can('updateAnyArticle') && $model->author_id !== Yii::$app->user->id) {
             throw new ForbiddenHttpException('فقط می‌توانید مقاله‌های خود را ویرایش کنید.');
         }
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+
+        if ($this->request->isPost) {
+            $model->load($this->request->post());
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            $model->pdfFile = UploadedFile::getInstance($model, 'pdfFile');
+
+            if ($model->validate()) {
+                if ($model->imageFile) {
+                    $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
+                    $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
+                }
+                if ($model->pdfFile) {
+                    $model->pdf_file = $model->pdfFile->baseName . '.' . $model->pdfFile->extension;
+                    $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
+                }
+
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
         }
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+
+        return $this->render('update', ['model' => $model]);
     }
 
     /**
