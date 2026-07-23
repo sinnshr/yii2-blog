@@ -6,6 +6,7 @@ use app\models\Comment;
 use app\models\CommentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 
 /**
@@ -24,13 +25,14 @@ class CommentController extends Controller
                 'access' => [
                     'class' => \yii\filters\AccessControl::class,
                     'rules' => [
-                        ['actions' => ['create'], 'allow' => true, 'roles' => ['@']],
+                        ['actions' => ['create', 'update', 'delete'], 'allow' => true, 'roles' => ['@']],
                     ],
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
                         'create' => ['POST'],
+                        'update' => ['POST'],
                         'delete' => ['POST'],
                     ],
                 ],
@@ -98,13 +100,14 @@ class CommentController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->author_id !== Yii::$app->user->id) {
+            throw new ForbiddenHttpException('شما فقط می‌توانید نظر خود را ویرایش کنید.');
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        $model->text = Yii::$app->request->post('Comment')['text'] ?? $model->text;
+        $model->save();
+
+        return $this->redirect(['article/view', 'id' => $model->article_id]);
     }
 
     /**
@@ -116,9 +119,16 @@ class CommentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
 
-        return $this->redirect(['index']);
+        if ($model->author_id !== Yii::$app->user->id) {
+            throw new ForbiddenHttpException('شما فقط می‌توانید نظر خود را حذف کنید.');
+        }
+
+        $articleId = $model->article_id;
+        $model->delete();
+
+        return $this->redirect(['article/view', 'id' => $articleId]);
     }
 
     /**

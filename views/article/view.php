@@ -26,10 +26,10 @@ $this->params['breadcrumbs'][] = $this->title;
             نویسنده: <?= Html::encode($model->author->username) ?>
             | دسته‌بندی:
             <?php
-                $category = $model->category;
-                $displayCategory = $category && $category->parent ? $category->parent : $category;
+            $category = $model->category;
+            $displayCategory = $category && $category->parent ? $category->parent : $category;
             ?>
-            <?= $displayCategory ? Html::a(Html::encode($displayCategory->title.'/'. $category->title), ['category/view', 'id' => $category->id]) : '' ?>
+            <?= $displayCategory ? Html::a(Html::encode($displayCategory->title . '/' . $category->title), ['category/view', 'id' => $category->id]) : '' ?>
         </p>
 
         <div class="prose max-w-none mb-6">
@@ -74,9 +74,43 @@ $this->params['breadcrumbs'][] = $this->title;
         <h3 class="text-lg font-semibold mb-4">نظرات (<?= count($model->comments) ?>)</h3>
 
         <?php foreach ($model->comments as $comment): ?>
-            <div class="mb-3 pb-3 border-b border-gray-100">
-                <strong><?= Html::encode($comment->user->username) ?>:</strong>
-                <?= Html::encode($comment->text) ?>
+            <div class="comment-item mb-3 pb-3 border-b border-gray-100" data-comment-id="<?= (int) $comment->id ?>">
+                <div class="comment-content">
+                    <strong><?= Html::encode($comment->user->username) ?>:</strong>
+                    <span class="comment-text"><?= Html::encode($comment->text) ?></span>
+                </div>
+
+                <?php if (!Yii::$app->user->isGuest && $comment->author_id === Yii::$app->user->id): ?>
+                    <div class="mt-2 flex gap-2">
+                        <?= Html::button('ویرایش', [
+                            'class' => 'btn btn-sm btn-secondary edit-comment-toggle',
+                            'type' => 'button',
+                        ]) ?>
+                        <?= Html::a('حذف', ['comment/delete', 'id' => $comment->id], [
+                            'class' => 'btn btn-sm btn-danger',
+                            'data' => [
+                                'confirm' => 'آیا از حذف این نظر مطمئن هستید؟',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
+                    </div>
+
+                    <?php $editForm = ActiveForm::begin([
+                        'action' => ['comment/update', 'id' => $comment->id],
+                        'options' => [
+                            'class' => 'edit-comment-form hidden mt-3',
+                            'data-comment-id' => $comment->id,
+                        ],
+                    ]); ?>
+                    <?= $editForm->field($comment, 'text')->textarea(['rows' => 3])->label('ویرایش دیدگاه') ?>
+                    <?= Html::hiddenInput('Comment[article_id]', $model->id) ?>
+                    <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->getCsrfToken()) ?>
+                    <div class="flex gap-2">
+                        <?= Html::submitButton('ذخیره', ['class' => 'btn btn-primary btn-sm']) ?>
+                        <?= Html::button('انصراف', ['class' => 'btn btn-secondary btn-sm cancel-edit-comment', 'type' => 'button']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
 
@@ -89,9 +123,31 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php ActiveForm::end() ?>
         <?php else: ?>
             <p class="text-gray-500">
-                برای ثبت نظر ابتدا <?= Html::a('وارد شوید', ['site/login'], ['class' => 'text-blue-600 hover:underline']) ?>.
+                برای ثبت نظر ابتدا
+                <?= Html::a('وارد شوید', ['site/login'], ['class' => 'text-blue-600 hover:underline']) ?>.
             </p>
         <?php endif; ?>
 
     </div>
+    <?php $this->registerJs(<<<JS
+    document.querySelectorAll('.edit-comment-toggle').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const commentItem = button.closest('.comment-item');
+            const form = commentItem ? commentItem.querySelector('.edit-comment-form') : null;
+            if (form) {
+                form.classList.toggle('hidden');
+            }
+        });
+    });
+
+    document.querySelectorAll('.cancel-edit-comment').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const commentItem = button.closest('.comment-item');
+            const form = commentItem ? commentItem.querySelector('.edit-comment-form') : null;
+            if (form) {
+                form.classList.add('hidden');
+            }
+        });
+    });
+JS); ?>
 </div>
