@@ -29,6 +29,8 @@ class Favorite extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['article_id'], 'exist', 'skipOnError' => true, 'targetClass' => Article::class, 'targetAttribute' => ['article_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
             [['user_id', 'article_id'], 'required'],
             [['user_id', 'article_id'], 'integer'],
         ];
