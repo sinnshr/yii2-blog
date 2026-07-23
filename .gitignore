@@ -34,3 +34,8 @@ tests/_support/_generated
 /.vscode/
 .DS_Store
 Thumbs.db
+
+web/uploads/images/*
+web/uploads/pdfs/*
+!web/uploads/images/.gitkeep
+!web/uploads/pdfs/.gitkeep
