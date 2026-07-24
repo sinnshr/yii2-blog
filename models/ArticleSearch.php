@@ -41,8 +41,7 @@ class ArticleSearch extends Article
      */
     public function search($params, $formName = null)
     {
-        $query = Article::find();
-
+        $query = Article::find()->with(['author', 'category']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

@@ -37,6 +37,9 @@ class Article extends \yii\db\ActiveRecord
     public $pdfFile;
     public $imageFile;
 
+    private $oldImage;
+    private $oldPdfFile;
+
     public function rules()
     {
         return [
@@ -48,6 +51,10 @@ class Article extends \yii\db\ActiveRecord
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             [['pdfFile'], 'file', 'extensions' => 'pdf'],
             [['imageFile'], 'file', 'extensions' => 'png, jpg, jpeg'],
+            [['imageFile'], 'file', 'extensions' => 'png, jpg, jpeg', 'maxSize' => 2 * 1024 * 1024],
+            [['pdfFile'], 'file', 'extensions' => 'pdf', 'maxSize' => 10 * 1024 * 1024],
+            [['title'], 'trim'],
+            [['title'], 'unique']
         ];
     }
 
@@ -65,6 +72,12 @@ class Article extends \yii\db\ActiveRecord
             'category_id' => 'Category ID',
             'author_id' => 'Author ID',
         ];
+    }
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->oldImage = $this->image;
+        $this->oldPdfFile = $this->pdf_file;
     }
 
     /**
@@ -97,6 +110,38 @@ class Article extends \yii\db\ActiveRecord
     public function getAuthor()
     {
         return $this->hasOne(User::class, ['id' => 'author_id']);
+    }
+
+    public function saveUploads(): void
+    {
+        if ($this->imageFile) {
+            $this->uploadFile($this->imageFile, 'image', '@webroot/uploads/images/', $this->oldImage);
+        }
+        if ($this->pdfFile) {
+            $this->uploadFile($this->pdfFile, 'pdf_file', '@webroot/uploads/pdfs/', $this->oldPdfFile);
+        }
+    }
+
+    private function uploadFile($file, string $attribute, string $pathAlias, ?string $oldFilename): void
+    {
+        $filename = Yii::$app->security->generateRandomString(12) . '.' . $file->extension;
+        $file->saveAs(Yii::getAlias($pathAlias) . $filename);
+
+        $this->updateAttributes([$attribute => $filename]);
+
+        if ($oldFilename) {
+            @unlink(Yii::getAlias($pathAlias) . $oldFilename);
+        }
+    }
+
+    public function deleteUploads(): void
+    {
+        if ($this->image) {
+            @unlink(Yii::getAlias('@webroot/uploads/images/') . $this->image);
+        }
+        if ($this->pdf_file) {
+            @unlink(Yii::getAlias('@webroot/uploads/pdfs/') . $this->pdf_file);
+        }
     }
 
 }

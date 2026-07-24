@@ -84,9 +84,10 @@ class ArticleController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+        $model->populateRelation('comments', $model->getComments()->with('user')->all());
+
+        return $this->render('view', ['model' => $model]);
     }
 
     /**
@@ -105,17 +106,18 @@ class ArticleController extends Controller
             $model->pdfFile = UploadedFile::getInstance($model, 'pdfFile');
 
             if ($model->validate()) {
-                if ($model->imageFile) {
-                    $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
-                    $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
-                }
-                if ($model->pdfFile) {
-                    $model->pdf_file = $model->pdfFile->baseName . '.' . $model->pdfFile->extension;
-                    $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
-                }
-
-                if ($model->save(false)) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    if ($model->save(false)) {
+                        $model->saveUploads();
+                        $transaction->commit();
+                        Yii::$app->session->setFlash('success', 'مقاله با موفقیت ایجاد شد.');
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                } catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    Yii::error($e->getMessage(), __METHOD__);
+                    Yii::$app->session->setFlash('error', 'مقاله ذخیره نشد.');
                 }
             }
         } else {
@@ -146,17 +148,18 @@ class ArticleController extends Controller
             $model->pdfFile = UploadedFile::getInstance($model, 'pdfFile');
 
             if ($model->validate()) {
-                if ($model->imageFile) {
-                    $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
-                    $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/images/') . $model->image);
-                }
-                if ($model->pdfFile) {
-                    $model->pdf_file = $model->pdfFile->baseName . '.' . $model->pdfFile->extension;
-                    $model->pdfFile->saveAs(Yii::getAlias('@webroot/uploads/pdfs/') . $model->pdf_file);
-                }
-
-                if ($model->save(false)) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    if ($model->save(false)) {
+                        $model->saveUploads();
+                        $transaction->commit();
+                        Yii::$app->session->setFlash('success', 'مقاله ویرایش شد.');
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                } catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    Yii::error($e->getMessage(), __METHOD__);
+                    Yii::$app->session->setFlash('error', 'ویرایش ناموفق بود.');
                 }
             }
         }
@@ -173,8 +176,11 @@ class ArticleController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->deleteUploads();
+        $model->delete();
 
+        Yii::$app->session->setFlash('success', 'مقاله حذف شد.');
         return $this->redirect(['index']);
     }
 
