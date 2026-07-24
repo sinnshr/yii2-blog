@@ -82,11 +82,13 @@ class FavoriteController extends Controller
          if ($liked) {
             $liked->delete();
          } else {
-            $favorite = new Favorite();
-            $favorite->user_id = $userId;
-            $favorite->article_id = $articleId;
-            $favorite->save();
-         }
+            $favorite = new Favorite(['user_id' => $userId, 'article_id' => $articleId]);
+            try {
+                $favorite->save();
+            } catch (\yii\db\IntegrityException $e) {
+                //ignore the exception when record exists
+            }
+        }
 
          return $this->redirect(['article/view','id' => $articleId]);
     }
