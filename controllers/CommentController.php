@@ -104,8 +104,11 @@ class CommentController extends Controller
             throw new ForbiddenHttpException('شما فقط می‌توانید نظر خود را ویرایش کنید.');
         }
 
-        $model->text = Yii::$app->request->post('Comment')['text'] ?? $model->text;
-        $model->save();
+        if ($model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'نظر ویرایش شد.');
+        } else {
+            Yii::$app->session->setFlash('error', 'ویرایش نظر ناموفق بود.');
+        }
 
         return $this->redirect(['article/view', 'id' => $model->article_id]);
     }

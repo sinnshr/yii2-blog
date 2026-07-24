@@ -36,6 +36,7 @@ class Comment extends \yii\db\ActiveRecord
             [['text'], 'string'],
             [['article_id', 'author_id'], 'integer'],
             [['article_id'], 'exist', 'skipOnError' => true, 'targetClass' => Article::class, 'targetAttribute' => ['article_id' => 'id']],
+            [['text'], 'trim']
         ];
     }
 
